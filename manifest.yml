@@ -1,0 +1,4 @@
+applications:
+- name: watchman
+  buildpack: go_buildpack
+
