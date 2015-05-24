@@ -22,7 +22,7 @@ cf push --no-stat
 cf set-env watchman DOPPLER_ADDRESS wss://doppler.10.244.0.34.xip.io:443
 cf set-env watchman STATSD_ADDRESS 10.244.2.2:8125
 cf set-env watchman STATSD_PREFIX CloudFoundry
-cf set-env watchman STATSD_PREFIX WatchmanFirehose
+cf set-env watchman FIREHOSE_SUBSCRIPTION_ID WatchmanFirehose
 cf set-env watchman CF_ACCESS_TOKEN "`cf oauth-token | tail -n 1`" #Make sure you're logged in as admin!
 ```
 
