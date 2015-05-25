@@ -6,7 +6,6 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -22,6 +21,7 @@ var dopplerAddress = os.Getenv("DOPPLER_ADDRESS")
 var statsdAddress = os.Getenv("STATSD_ADDRESS")
 var statsdPrefix = os.Getenv("STATSD_PREFIX")
 var firehoseSubscriptionID = os.Getenv("FIREHOSE_SUBSCRIPTION_ID")
+var authToken = os.Getenv("CF_ACCESS_TOKEN")
 
 func hello(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(w, "hello, world!")
@@ -38,13 +38,14 @@ func setupHTTP() {
 	}()
 }
 
+/*
 func getAccessTokenFromUAA() string {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
 
-	url := "https://admin:admin@uaa.10.244.0.34.xip.io/oauth/token?grant_type=password&response_type=token&username=admin&password=admin&client_id=admin&scope=doppler.firehose"
+	url := "https://admin:admin@uaa.10.244.0.34.xip.io/uaa/oauth/authorize?grant_type=password&response_type=token&username=admin&password=admin&client_id=watchman"
 	//	var b = strings.NewReader(`{"username":"admin","password":"admin"}`)
 
 	resp, err := client.Post(url, "application/json", nil)
@@ -66,12 +67,12 @@ func getAccessTokenFromUAA() string {
 
 	return string(body)
 }
-
+*/
 func main() {
 
 	setupHTTP()
 
-	authToken := getAccessTokenFromUAA()
+	//authToken := getAccessTokenFromUAA()
 	//log.Print("Using auth token " + authToken)
 	consumer := noaa.NewConsumer(dopplerAddress, &tls.Config{InsecureSkipVerify: true}, nil)
 
