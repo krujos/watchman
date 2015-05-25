@@ -6,6 +6,7 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -17,7 +18,6 @@ import (
 	"github.com/quipo/statsd"
 )
 
-var authToken = os.Getenv("CF_ACCESS_TOKEN")
 var dopplerAddress = os.Getenv("DOPPLER_ADDRESS")
 var statsdAddress = os.Getenv("STATSD_ADDRESS")
 var statsdPrefix = os.Getenv("STATSD_PREFIX")
@@ -27,8 +27,7 @@ func hello(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(w, "hello, world!")
 }
 
-func main() {
-
+func setupHTTP() {
 	http.HandleFunc("/", hello)
 
 	go func() {
@@ -37,7 +36,43 @@ func main() {
 			log.Fatal("ListenAndServe:", err)
 		}
 	}()
+}
 
+func getAccessTokenFromUAA() string {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+
+	url := "https://admin:admin@uaa.10.244.0.34.xip.io/oauth/token?grant_type=password&response_type=token&username=admin&password=admin&client_id=admin&scope=doppler.firehose"
+	//	var b = strings.NewReader(`{"username":"admin","password":"admin"}`)
+
+	resp, err := client.Post(url, "application/json", nil)
+
+	if nil != err {
+		log.Fatal(err)
+		panic("Failed to post to UAA!")
+	}
+	//log.Print("Location: " + resp.Header.Get("Location"))
+	for key, value := range resp.Header {
+		fmt.Println("Key:", key, "Value:", value)
+	}
+
+	log.Print("Status Code: ")
+	log.Print(resp.StatusCode)
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	return string(body)
+}
+
+func main() {
+
+	setupHTTP()
+
+	authToken := getAccessTokenFromUAA()
+	//log.Print("Using auth token " + authToken)
 	consumer := noaa.NewConsumer(dopplerAddress, &tls.Config{InsecureSkipVerify: true}, nil)
 
 	httpStartStopProcessor := processors.NewHttpStartStopProcessor()
