@@ -73,7 +73,6 @@ func main() {
 	setupHTTP()
 
 	//authToken := getAccessTokenFromUAA()
-	//log.Print("Using auth token " + authToken)
 	consumer := noaa.NewConsumer(dopplerAddress, &tls.Config{InsecureSkipVerify: true}, nil)
 
 	httpStartStopProcessor := processors.NewHttpStartStopProcessor()
