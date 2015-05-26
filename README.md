@@ -32,6 +32,8 @@ cf set-env watchman FIREHOSE_SUBSCRIPTION_ID WatchmanFirehose
 cf set-env watchman CF_ACCESS_TOKEN "`uaac context watchman | grep access_token | sed -e "s/access_token:/bearer/"`"
 ```
 
+A word of warning, if you're using bosh-lite make sure you change the default security groups to allow routing to the 10.0.0.0/16 network. 
+
 ##TODO
 
 * Refresh token
