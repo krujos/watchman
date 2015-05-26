@@ -26,8 +26,11 @@ var authToken = os.Getenv("CF_ACCESS_TOKEN")
 var count = uint64(0)
 
 func hello(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(w, "Hello! this is a dummy endpoint, if you're getting metrics,",
-		" it's working. We have processed ", atomic.LoadUint64(&count), " events")
+	fmt.Fprintln(w,
+		"Hello!\nWe have processed", atomic.LoadUint64(&count), "events",
+		"\nWe're pushing to StatsD at", statsdAddress, "with a prefix of",
+		statsdPrefix,
+		"\nWe have tapped the firehose at ", dopplerAddress)
 }
 
 func setupHTTP() {
