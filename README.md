@@ -1,12 +1,15 @@
 Watchman
 ========
 
-A firehose nozzle that runs in CloudFoundry for monitoring HTTP endpoints. Metrics for each endpoint are dumped to StatsD.
+A firehose nozzle that runs in Cloud Foundry for monitoring HTTP endpoints. Metrics for each endpoint are dumped to StatsD. Nozzle's are designed to scale horizontally, have no state and are thus a great fit for running inside of the platform. Nozzles can scale to distribute load, CF knows how to do that, seems like a win win. This repo is an experiment in that vein, what needs to be done to run a nozzle in CF, what are the consequences of doing so?
+
+A ton of thanks to [CloudCredo](http://cloudcredo.com/) for having done the [heavy lifting](http://cloudcredo.com/how-to-integrate-graphite-with-cloud-foundry/) of parsing the firehose, and then writing about. This is really just an adaptation of [Ed King's work](https://github.com/CloudCredo/graphite-nozzle).
 
 #Running
 
-This nozzle relies on a few environment variables: 
+First, you need a StatsD instance to pump to and something to visualize it with. I've been using the [bosh release for StatsD + Graphite from CloudCredo](https://github.com/CloudCredo/graphite-statsd-boshrelease). It's fantastic and a great place to start.
 
+This nozzle relies on a few environment variables: 
 
 * `CF_ACCESS_TOKEN` Allows the nozzle to register with CF and receive events
 * `DOPPLER_ADDRESS` Is where the nozzle attaches to to receive metrics
@@ -20,7 +23,7 @@ You shouldn't really use admin tokens to watch the firehose, so lets create some
 ```
 $ uaac client add watchman --scope uaa.none --authorized_grant_types "authorization_code, client_credentials, refresh_token" --authorities doppler.firehose --redirect_uri http://example.com 
 
-# This should return a bearer token.
+# This will return a bearer token.
 $ curl -k -v 'https://watchman:watchman@uaa.10.244.0.34.xip.io/oauth/token?grant_type=client_credentials&response_type=token&client_id=watchman'
 ```
 
@@ -44,3 +47,6 @@ A word of warning, if you're using bosh-lite make sure you change the default se
 ##TODO
 
 * Refresh, shoving in CF_ACCESS_TOKEN by hand sucks
+
+
+
