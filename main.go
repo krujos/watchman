@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync/atomic"
 
 	"github.com/cloudcredo/graphite-nozzle/metrics"
 	"github.com/cloudcredo/graphite-nozzle/processors"
@@ -22,9 +23,11 @@ var statsdAddress = os.Getenv("STATSD_ADDRESS")
 var statsdPrefix = os.Getenv("STATSD_PREFIX")
 var firehoseSubscriptionID = os.Getenv("FIREHOSE_SUBSCRIPTION_ID")
 var authToken = os.Getenv("CF_ACCESS_TOKEN")
+var count = uint64(0)
 
 func hello(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(w, "hello, world!")
+	fmt.Fprintln(w, "Hello! this is a dummy endpoint, if you're getting metrics,",
+		" it's working. We have processed ", atomic.LoadUint64(&count), " events")
 }
 
 func setupHTTP() {
@@ -98,9 +101,10 @@ func main() {
 		// graphite-nozzle can handle CounterEvent, ContainerMetric, Heartbeat,
 		// HttpStartStop and ValueMetric events
 		switch eventType {
-
 		case events.Envelope_HttpStartStop:
 			processedMetrics = httpStartStopProcessor.Process(msg)
+			atomic.AddUint64(&count, 1)
+		default:
 			// do nothing
 		}
 
