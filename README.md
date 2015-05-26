@@ -46,6 +46,7 @@ A word of warning, if you're using bosh-lite make sure you change the default se
 
 ##TODO
 
+* Statsd and doppler should be exposed as services.
 * Refresh, shoving in CF_ACCESS_TOKEN by hand sucks
 
 
