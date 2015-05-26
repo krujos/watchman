@@ -33,7 +33,7 @@ $ curl -k -v 'https://watchman:watchman@uaa.10.244.0.34.xip.io/oauth/token?grant
 Push, set some environment variables, start it up. Make sure you're quick about the oauth token bit as they expire!
 
 ```
-cf push --no-stat
+cf push --no-start
 cf set-env watchman DOPPLER_ADDRESS wss://doppler.10.244.0.34.xip.io:443
 cf set-env watchman STATSD_ADDRESS 10.244.2.2:8125
 cf set-env watchman STATSD_PREFIX CloudFoundry
