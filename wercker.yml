@@ -11,7 +11,7 @@ build:
         cd $WERCKER_SOURCE_DIR
         go version
         go get -u github.com/tools/godep
-		export PATH=$WERCKER_SOURCE_DIR/bin:$PATH
+        export PATH=$WERCKER_SOURCE_DIR/bin:$PATH
 
   # The steps that will be executed on build
   # Steps make up the actions in your pipeline
