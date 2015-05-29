@@ -5,6 +5,8 @@ A firehose nozzle that runs in Cloud Foundry for monitoring HTTP endpoints. Metr
 
 A ton of thanks to [CloudCredo](http://cloudcredo.com/) for having done the [heavy lifting](http://cloudcredo.com/how-to-integrate-graphite-with-cloud-foundry/) of parsing the firehose, and then writing about. This is really just an adaptation of [Ed King's work](https://github.com/CloudCredo/graphite-nozzle).
 
+[![wercker status](https://app.wercker.com/status/a92c776ac16c25caaff0027933e352e1/s "wercker status")](https://app.wercker.com/project/bykey/a92c776ac16c25caaff0027933e352e1)
+
 #Running
 
 First, you need a StatsD instance to pump to and something to visualize it with. I've been using the [bosh release for StatsD + Graphite from CloudCredo](https://github.com/CloudCredo/graphite-statsd-boshrelease). It's fantastic and a great place to start.
