@@ -5,6 +5,14 @@
 # http://devcenter.wercker.com/docs/containers/index.html
 box: golang
 build:
+  - script:
+      name: go get
+      code: |
+        cd $WERCKER_SOURCE_DIR
+        go version
+        go get -u github.com/tools/godep
+		export PATH=$WERCKER_SOURCE_DIR/bin:$PATH
+
   # The steps that will be executed on build
   # Steps make up the actions in your pipeline
   # Read more about steps on our dev center:
@@ -20,12 +28,10 @@ build:
     - script:
         name: godep go build
         code: |
-          go get godep
           godep go build ./...
 
     # Test the project
     - script:
         name: godep go test
         code: |
-          go get godep
           godep go test ./...
