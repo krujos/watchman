@@ -3,19 +3,7 @@
 # If you want Google's container you would reference google/golang
 # Read more about containers on our dev center
 # http://devcenter.wercker.com/docs/containers/index.html
-box: golang
-# This is the build pipeline. Pipelines are the core of wercker
-# Read more about pipelines on our dev center
-# http://devcenter.wercker.com/docs/pipelines/index.html
-
-# You can also use services such as databases. Read more on our dev center:
-# http://devcenter.wercker.com/docs/services/index.html
-# services:
-    # - postgres
-    # http://devcenter.wercker.com/docs/services/postgresql.html
-
-    # - mongodb
-    # http://devcenter.wercker.com/docs/services/mongodb.html
+box: attilaolah/godep
 build:
   # The steps that will be executed on build
   # Steps make up the actions in your pipeline
@@ -30,12 +18,12 @@ build:
 
     # Build the project
     - script:
-        name: go build
+        name: godep go build
         code: |
-          go build ./...
+          godep go build ./...
 
     # Test the project
     - script:
-        name: go test
+        name: godep go test
         code: |
-          go test ./...
+          godep go test ./...
