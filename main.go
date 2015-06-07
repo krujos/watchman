@@ -59,7 +59,12 @@ func main() {
 		panic("Failed to parse uaa url!")
 	}
 
-	creds, _ := uaaclientcredentials.New(uaaURL, true, clientID, clientSecret)
+	creds, err := uaaclientcredentials.New(uaaURL, true, clientID, clientSecret)
+
+	if nil != err {
+		panic("Failed to obtain creds!")
+	}
+
 	consumer := noaa.NewConsumer(dopplerAddress, &tls.Config{InsecureSkipVerify: true}, nil)
 
 	httpStartStopProcessor := processors.NewHttpStartStopProcessor()
