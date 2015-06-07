@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"sync/atomic"
 
@@ -15,6 +16,7 @@ import (
 	"github.com/cloudcredo/graphite-nozzle/processors"
 	"github.com/cloudfoundry/noaa"
 	"github.com/cloudfoundry/noaa/events"
+	"github.com/krujos/uaaclientcredentials"
 	"github.com/quipo/statsd"
 )
 
@@ -22,8 +24,11 @@ var dopplerAddress = os.Getenv("DOPPLER_ADDRESS")
 var statsdAddress = os.Getenv("STATSD_ADDRESS")
 var statsdPrefix = os.Getenv("STATSD_PREFIX")
 var firehoseSubscriptionID = os.Getenv("FIREHOSE_SUBSCRIPTION_ID")
-var authToken = os.Getenv("CF_ACCESS_TOKEN")
 var count = uint64(0)
+
+var uaa = os.Getenv("UAA_ADDRESS")
+var clientID = os.Getenv("CLIENT_ID")
+var clientSecret = os.Getenv("CLIENT_SECRET")
 
 func hello(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(w,
@@ -48,6 +53,13 @@ func main() {
 
 	setupHTTP()
 
+	uaaURL, err := url.Parse(uaa)
+
+	if nil != err {
+		panic("Failed to parse uaa url!")
+	}
+
+	creds, _ := uaaclientcredentials.New(uaaURL, true, clientID, clientSecret)
 	consumer := noaa.NewConsumer(dopplerAddress, &tls.Config{InsecureSkipVerify: true}, nil)
 
 	httpStartStopProcessor := processors.NewHttpStartStopProcessor()
@@ -60,7 +72,11 @@ func main() {
 	go func() {
 		defer close(msgChan)
 		errorChan := make(chan error)
-		go consumer.Firehose(firehoseSubscriptionID, authToken, msgChan, errorChan, nil)
+		token, err := creds.GetBearerToken()
+		if nil != err {
+			panic(err)
+		}
+		go consumer.Firehose(firehoseSubscriptionID, token, msgChan, errorChan, nil)
 
 		for err := range errorChan {
 			fmt.Fprintf(os.Stderr, "%v\n", err.Error())
