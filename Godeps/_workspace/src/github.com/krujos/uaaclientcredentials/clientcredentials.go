@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-//UaaClientCredentials provides a token for a given clientId and clientSecret.
+//UAAClientCredentials provides a token for a given clientId and clientSecret.
 //The token is refreshed for you according to expires_in
-type UaaClientCredentials struct {
+type UAAClientCredentials struct {
 	uaaURI            *url.URL
 	clientID          string
 	clientSecret      string
@@ -37,7 +37,7 @@ type UAATokenResponse struct {
 //CF API. You should not cache the token as the library will handle updating
 //it if it's expired. This API will return an empty string and an error if
 //there was a problem aquiring a token from UAA
-func (creds *UaaClientCredentials) GetBearerToken() (string, error) {
+func (creds *UAAClientCredentials) GetBearerToken() (string, error) {
 	if time.Now().After(creds.expiresAt) {
 		if err := creds.getToken(); nil != err {
 			return "", err
@@ -46,9 +46,9 @@ func (creds *UaaClientCredentials) GetBearerToken() (string, error) {
 	return "bearer " + creds.accessToken, nil
 }
 
-//New UaaClientCredentials factory
+//New UAAClientCredentials factory
 func New(uaaURI *url.URL, skipSSLValidation bool, clientID string,
-	clientSecret string) (*UaaClientCredentials, error) {
+	clientSecret string) (*UAAClientCredentials, error) {
 
 	if len(clientID) < 1 {
 		return nil, errors.New("clientID cannot be empty")
@@ -64,7 +64,7 @@ func New(uaaURI *url.URL, skipSSLValidation bool, clientID string,
 	duration, _ := time.ParseDuration("-5m")
 	expiresAt := time.Now().Add(duration)
 
-	creds := &UaaClientCredentials{
+	creds := &UAAClientCredentials{
 		uaaURI:            uri,
 		clientID:          clientID,
 		clientSecret:      clientSecret,
@@ -75,14 +75,14 @@ func New(uaaURI *url.URL, skipSSLValidation bool, clientID string,
 	return creds, nil
 }
 
-func (creds *UaaClientCredentials) getTLSConfig() *tls.Config {
+func (creds *UAAClientCredentials) getTLSConfig() *tls.Config {
 	if creds.skipSSLValidation {
 		return &tls.Config{InsecureSkipVerify: true}
 	}
 	return &tls.Config{}
 }
 
-func (creds *UaaClientCredentials) getClient() *http.Client {
+func (creds *UAAClientCredentials) getClient() *http.Client {
 	return &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: creds.getTLSConfig(),
@@ -90,7 +90,7 @@ func (creds *UaaClientCredentials) getClient() *http.Client {
 	}
 }
 
-func (creds *UaaClientCredentials) getJSON() ([]byte, error) {
+func (creds *UAAClientCredentials) getJSON() ([]byte, error) {
 	client := creds.getClient()
 	req, err := http.NewRequest("GET", creds.uaaURI.String(), nil)
 	req.SetBasicAuth(creds.clientID, creds.clientSecret)
@@ -110,7 +110,7 @@ func (creds *UaaClientCredentials) getJSON() ([]byte, error) {
 	return body, err
 }
 
-func (creds *UaaClientCredentials) getToken() error {
+func (creds *UAAClientCredentials) getToken() error {
 
 	body, err := creds.getJSON()
 

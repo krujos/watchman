@@ -24,7 +24,7 @@
 		},
 		{
 			"ImportPath": "github.com/krujos/uaaclientcredentials",
-			"Rev": "9a9346be626dbca7068756d3c817cca0186504e4"
+			"Rev": "bc54e8bf53c3ce458855be58c3583a267f6d6f8c"
 		},
 		{
 			"ImportPath": "github.com/quipo/statsd",

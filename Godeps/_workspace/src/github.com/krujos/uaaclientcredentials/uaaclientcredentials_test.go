@@ -10,9 +10,9 @@ import (
 	"github.com/onsi/gomega/ghttp"
 )
 
-var _ = Describe("Uaaclientcredentials", func() {
+var _ = Describe("UAAClientCredentials", func() {
 	var url *url.URL
-	var uaaCC *UaaClientCredentials
+	var uaaCC *UAAClientCredentials
 
 	BeforeEach(func() {
 		url, _ = url.Parse("https://uaa.at.your.place.com")
