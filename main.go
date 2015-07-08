@@ -16,7 +16,6 @@ import (
 	"github.com/cloudcredo/graphite-nozzle/processors"
 	"github.com/cloudfoundry/noaa"
 	"github.com/cloudfoundry/noaa/events"
-	"github.com/krujos/exceptionprocessor"
 	"github.com/krujos/uaaclientcredentials"
 	"github.com/quipo/statsd"
 )
@@ -69,7 +68,6 @@ func main() {
 	consumer := noaa.NewConsumer(dopplerAddress, &tls.Config{InsecureSkipVerify: true}, nil)
 
 	httpStartStopProcessor := processors.NewHttpStartStopProcessor()
-	exceptionProcessor := exceptionprocessor.NewExceptionProcessor()
 	sender := statsd.NewStatsdClient(statsdAddress, statsdPrefix)
 	sender.CreateSocket()
 
@@ -96,8 +94,6 @@ func main() {
 		switch eventType {
 		case events.Envelope_HttpStartStop:
 			processedMetrics = httpStartStopProcessor.Process(msg)
-		case events.Envelope_LogMessage:
-			processedMetrics = exceptionProcessor.Process(msg)
 		default:
 			atomic.AddUint64(&count, 1)
 			// do nothing

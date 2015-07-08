@@ -23,10 +23,6 @@
 			"Rev": "9007e29a7c93fc3dcebbdbf742ce0efaf19e6510"
 		},
 		{
-			"ImportPath": "github.com/krujos/exceptionprocessor",
-			"Rev": "972bf81a4b8872d2df5a3fa376cadb249f14cb95"
-		},
-		{
 			"ImportPath": "github.com/krujos/uaaclientcredentials",
 			"Rev": "bc54e8bf53c3ce458855be58c3583a267f6d6f8c"
 		},
