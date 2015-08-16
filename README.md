@@ -25,7 +25,7 @@ This nozzle relies on a few environment variables:
 You shouldn't really use admin tokens to watch the firehose, so lets create something with limited access. 
 
 ```
-$ uaac client add watchman --scope uaa.none --authorized_grant_types "authorization_code, client_credentials, refresh_token" --authorities doppler.firehose --redirect_uri http://example.com 
+$ uaac client add watchman --scope uaa.none --authorized_grant_types "client_credentials" --authorities doppler.firehose --redirect_uri http://example.com 
 
 # This will return a bearer token.
 $ curl -k -v 'https://watchman:watchman@uaa.10.244.0.34.xip.io/oauth/token?grant_type=client_credentials'
