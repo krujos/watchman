@@ -38,8 +38,8 @@ var count = uint64(0)
 func hello(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(w,
 		"Hello!\nWe have processed", atomic.LoadUint64(&count), "events",
-		"\nWe're pushing to StatsD at", statsdAddress, "with a prefix of",
-		statsdPrefix,
+		"\nWe're pushing to StatsD at", *statsdAddress, "with a prefix of",
+		*statsdPrefix,
 		"\nWe have tapped the firehose at ", fmt.Sprintf("wss://doppler.%s:%d", *domain, *dopplerPort))
 }
 
