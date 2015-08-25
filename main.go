@@ -30,7 +30,7 @@ var (
 	clientSecret      = kingpin.Flag("client-secret", "CF UAA OAuth client secret of client with 'doppler.firehose' permissions.").Default("CLIENT_SECRET").OverrideDefaultFromEnvar("CLIENT_SECRET").String()
 	skipSSLValidation = kingpin.Flag("skip-ssl-validation", "Please don't").Bool()
 	statsdAddress     = kingpin.Flag("statsd-address", "IP and port to the statsd endpoint.").Default("STATSD_ADDRESS").OverrideDefaultFromEnvar("STATSD_ADDRESS").String()
-	statsdPrefix      = kingpin.Flag("stats-prefix", "The prefix to use for statsd metrics.").Default("cf").OverrideDefaultFromEnvar("STATSD_PREFIX").String()
+	statsdPrefix      = kingpin.Flag("statsd-prefix", "The prefix to use for statsd metrics.").Default("cf").OverrideDefaultFromEnvar("STATSD_PREFIX").String()
 )
 
 var count = uint64(0)
