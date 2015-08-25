@@ -1,14 +1,22 @@
 {
 	"ImportPath": "github.com/krujos/watchman",
-	"GoVersion": "go1.3.3",
+	"GoVersion": "go1.4.2",
 	"Deps": [
 		{
+			"ImportPath": "github.com/alecthomas/template",
+			"Rev": "b867cc6ab45cece8143cfcc6fc9c77cf3f2c23c0"
+		},
+		{
+			"ImportPath": "github.com/alecthomas/units",
+			"Rev": "6b4e7dc5e3143b85ea77909c72caf89416fc2915"
+		},
+		{
 			"ImportPath": "github.com/cloudcredo/graphite-nozzle/metrics",
-			"Rev": "f243f1e5677d10be5603f2752507f615aa7a7ed7"
+			"Rev": "b489bb5f0cd03359e0a46a32ed4e5b11e0e246da"
 		},
 		{
 			"ImportPath": "github.com/cloudcredo/graphite-nozzle/processors",
-			"Rev": "f243f1e5677d10be5603f2752507f615aa7a7ed7"
+			"Rev": "b489bb5f0cd03359e0a46a32ed4e5b11e0e246da"
 		},
 		{
 			"ImportPath": "github.com/cloudfoundry/noaa",
@@ -24,7 +32,7 @@
 		},
 		{
 			"ImportPath": "github.com/krujos/uaaclientcredentials",
-			"Rev": "bc54e8bf53c3ce458855be58c3583a267f6d6f8c"
+			"Rev": "2e37dbb3d134fc1464d1a66d53de7ac06b3ea9b1"
 		},
 		{
 			"ImportPath": "github.com/quipo/statsd",
