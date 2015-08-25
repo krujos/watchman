@@ -25,12 +25,12 @@ var (
 	cfPush            = kingpin.Flag("cf-push", "Deploy to Cloud Foundry.").Default("true").Bool()
 	domain            = kingpin.Flag("domain", "Domain of your CF installation.").Default("10.244.0.34.xip.io").OverrideDefaultFromEnvar("CF_DOMAIN").String()
 	dopplerPort       = kingpin.Flag("doppler-port", "Custom port for doppler / loggregator endpoint").Default("443").Int()
-	subscriptionId    = kingpin.Flag("subscription-id", "ID for the firehose subscription.").Default("watchman").OverrideDefaultFromEnvar("FIREHOSE_SUBSCRIPTION_ID").String()
+	subscriptionID    = kingpin.Flag("subscription-id", "ID for the firehose subscription.").Default("watchman").OverrideDefaultFromEnvar("FIREHOSE_SUBSCRIPTION_ID").String()
 	clientID          = kingpin.Flag("client-id", "CF UAA OAuth client ID with 'doppler.firehose' permissions.").Default("CLIENT_ID").OverrideDefaultFromEnvar("CLIENT_ID").String()
 	clientSecret      = kingpin.Flag("client-secret", "CF UAA OAuth client secret of client with 'doppler.firehose' permissions.").Default("CLIENT_SECRET").OverrideDefaultFromEnvar("CLIENT_SECRET").String()
 	skipSSLValidation = kingpin.Flag("skip-ssl-validation", "Please don't").Bool()
 	statsdAddress     = kingpin.Flag("statsd-address", "IP and port to the statsd endpoint.").Default("STATSD_ADDRESS").OverrideDefaultFromEnvar("STATSD_ADDRESS").String()
-	statsdPrefix      = kingpin.Flag("statsd-prefix", "The prefix to use for statsd metrics.").Default("cf").OverrideDefaultFromEnvar("STATSD_PREFIX").String()
+	statsdPrefix      = kingpin.Flag("statsd-prefix", "The prefix to use for statsd metrics.").Default("cf.").OverrideDefaultFromEnvar("STATSD_PREFIX").String()
 )
 
 var count = uint64(0)
@@ -91,7 +91,7 @@ func main() {
 		if nil != err {
 			panic(err)
 		}
-		go consumer.Firehose(*subscriptionId, token, msgChan, errorChan, nil)
+		go consumer.Firehose(*subscriptionID, token, msgChan, errorChan, nil)
 
 		for err := range errorChan {
 			fmt.Fprintf(os.Stderr, "%v\n", err.Error())
