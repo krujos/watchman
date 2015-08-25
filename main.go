@@ -18,24 +18,29 @@ import (
 	"github.com/cloudfoundry/noaa/events"
 	"github.com/krujos/uaaclientcredentials"
 	"github.com/quipo/statsd"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-var dopplerAddress = os.Getenv("DOPPLER_ADDRESS")
-var statsdAddress = os.Getenv("STATSD_ADDRESS")
-var statsdPrefix = os.Getenv("STATSD_PREFIX")
-var firehoseSubscriptionID = os.Getenv("FIREHOSE_SUBSCRIPTION_ID")
-var count = uint64(0)
+var (
+	cfPush            = kingpin.Flag("cf-push", "Deploy to Cloud Foundry.").Bool()
+	domain            = kingpin.Flag("domain", "Domain of your CF installation.").Default("10.244.0.34.xip.io").OverrideDefaultFromEnvar("CF_DOMAIN").String()
+	dopplerPort       = kingpin.Flag("doppler-port", "Custom port for doppler / loggregator endpoint").Default("443").Int()
+	subscriptionId    = kingpin.Flag("subscription-id", "ID for the firehose subscription.").Default("watchman").OverrideDefaultFromEnvar("FIREHOSE_SUBSCRIPTION_ID").String()
+	clientID          = kingpin.Flag("client-id", "CF UAA OAuth client ID with 'doppler.firehose' permissions.").Default("CLIENT_ID").OverrideDefaultFromEnvar("CLIENT_ID").String()
+	clientSecret      = kingpin.Flag("client-secret", "CF UAA OAuth client secret of client with 'doppler.firehose' permissions.").Default("CLIENT_SECRET").OverrideDefaultFromEnvar("CLIENT_SECRET").String()
+	skipSSLValidation = kingpin.Flag("skip-ssl-validation", "Please don't").Bool()
+	statsdAddress     = kingpin.Flag("statsd-address", "IP and port to the statsd endpoint.").Default("STATSD_ADDRESS").OverrideDefaultFromEnvar("STATSD_ADDRESS").String()
+	statsdPrefix      = kingpin.Flag("stats-prefix", "The prefix to use for statsd metrics.").Default("cf").OverrideDefaultFromEnvar("STATSD_PREFIX").String()
+)
 
-var uaa = os.Getenv("UAA_ADDRESS")
-var clientID = os.Getenv("CLIENT_ID")
-var clientSecret = os.Getenv("CLIENT_SECRET")
+var count = uint64(0)
 
 func hello(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(w,
 		"Hello!\nWe have processed", atomic.LoadUint64(&count), "events",
 		"\nWe're pushing to StatsD at", statsdAddress, "with a prefix of",
 		statsdPrefix,
-		"\nWe have tapped the firehose at ", dopplerAddress)
+		"\nWe have tapped the firehose at ", fmt.Sprintf("wss://doppler.%s:%d", *domain, *dopplerPort))
 }
 
 func setupHTTP() {
@@ -50,25 +55,30 @@ func setupHTTP() {
 }
 
 func main() {
+	kingpin.Version("0.0.1")
+	kingpin.Parse()
 
-	setupHTTP()
+	if *cfPush == true {
+		setupHTTP()
+	}
 
-	uaaURL, err := url.Parse(uaa)
+	uaaURL, err := url.Parse(fmt.Sprintf("https://uaa.%s", *domain))
 
 	if nil != err {
 		panic("Failed to parse uaa url!")
 	}
 
-	creds, err := uaaclientcredentials.New(uaaURL, true, clientID, clientSecret)
+	creds, err := uaaclientcredentials.New(uaaURL, true, *clientID, *clientSecret)
 
 	if nil != err {
 		panic("Failed to obtain creds!")
 	}
 
+	dopplerAddress := fmt.Sprintf("wss://doppler.%s:%d", *domain, *dopplerPort)
 	consumer := noaa.NewConsumer(dopplerAddress, &tls.Config{InsecureSkipVerify: true}, nil)
 
 	httpStartStopProcessor := processors.NewHttpStartStopProcessor()
-	sender := statsd.NewStatsdClient(statsdAddress, statsdPrefix)
+	sender := statsd.NewStatsdClient(*statsdAddress, *statsdPrefix)
 	sender.CreateSocket()
 
 	var processedMetrics []metrics.Metric
@@ -81,7 +91,7 @@ func main() {
 		if nil != err {
 			panic(err)
 		}
-		go consumer.Firehose(firehoseSubscriptionID, token, msgChan, errorChan, nil)
+		go consumer.Firehose(*subscriptionId, token, msgChan, errorChan, nil)
 
 		for err := range errorChan {
 			fmt.Fprintf(os.Stderr, "%v\n", err.Error())
