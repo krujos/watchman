@@ -22,7 +22,7 @@ import (
 )
 
 var (
-	cfPush            = kingpin.Flag("cf-push", "Deploy to Cloud Foundry.").Bool()
+	cfPush            = kingpin.Flag("cf-push", "Deploy to Cloud Foundry.").Default("true").Bool()
 	domain            = kingpin.Flag("domain", "Domain of your CF installation.").Default("10.244.0.34.xip.io").OverrideDefaultFromEnvar("CF_DOMAIN").String()
 	dopplerPort       = kingpin.Flag("doppler-port", "Custom port for doppler / loggregator endpoint").Default("443").Int()
 	subscriptionId    = kingpin.Flag("subscription-id", "ID for the firehose subscription.").Default("watchman").OverrideDefaultFromEnvar("FIREHOSE_SUBSCRIPTION_ID").String()
