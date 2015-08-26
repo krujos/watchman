@@ -24,6 +24,7 @@ import (
 var (
 	cfPush            = kingpin.Flag("cf-push", "Deploy to Cloud Foundry.").Default("true").Bool()
 	dopplerEndpoint   = kingpin.Flag("doppler-endpoint", "Overwrite default doppler endpoint return by /v2/info").OverrideDefaultFromEnvar("DOPPLER_ENDPOINT").String()
+	uaaEndpoint       = kingpin.Flag("uaa-endpoint", "Overwrite default uaa endpoint return by /v2/info").OverrideDefaultFromEnvar("UAA_ENDPOINT").String()
 	subscriptionID    = kingpin.Flag("subscription-id", "ID for the firehose subscription.").Default("watchman").OverrideDefaultFromEnvar("FIREHOSE_SUBSCRIPTION_ID").String()
 	clientID          = kingpin.Flag("client-id", "CF UAA OAuth client ID with 'doppler.firehose' permissions.").Default("CLIENT_ID").OverrideDefaultFromEnvar("CLIENT_ID").String()
 	clientSecret      = kingpin.Flag("client-secret", "CF UAA OAuth client secret of client with 'doppler.firehose' permissions.").Default("CLIENT_SECRET").OverrideDefaultFromEnvar("CLIENT_SECRET").String()
@@ -61,7 +62,7 @@ func main() {
 		setupHTTP()
 	}
 
-	uaaURL, err := url.Parse(fmt.Sprintf("https://uaa.%s", *domain))
+	uaaURL, err := url.Parse(*uaaEndpoint)
 
 	if nil != err {
 		panic("Failed to parse uaa url!")
