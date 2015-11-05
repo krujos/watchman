@@ -15,8 +15,8 @@ This nozzle relies on a few environment variables:
 
 * `CLIENT_ID` Is the uaa client we should authenticate as.
 * `CLIENT_SECRET` Is the secret for uaa client so we can obtain a token.
-* `UAA_ADDRESS` Is the uaa instance we should talk to for tokens.
-* `DOPPLER_ADDRESS` Is where the nozzle attaches to to receive metrics
+* `UAA_ENDPOINT` Is the uaa instance we should talk to for tokens.
+* `DOPPLER_ENDPOINT` Is where the nozzle attaches to to receive metrics
 * `STATSD_ADDRESS` Is where the nozzle sends metrics to 
 * `STATSD_PREFIX` Controls the StatsD node names that various metrics will appear under. 
 * `FIREHOSE_SUBSCRIPTION_ID` Tell the firehose who's connecting
@@ -38,13 +38,13 @@ Push, set some environment variables, start it up. Make sure you're quick about 
 
 ```
 cf push --no-start
-cf set-env watchman DOPPLER_ADDRESS wss://doppler.10.244.0.34.xip.io:443
+cf set-env watchman DOPPLER_ENDPOINT wss://doppler.10.244.0.34.xip.io:443
 cf set-env watchman STATSD_ADDRESS 10.244.2.2:8125
 cf set-env watchman STATSD_PREFIX CloudFoundry
 cf set-env watchman FIREHOSE_SUBSCRIPTION_ID WatchmanFirehose
 cf set-env watchman CLIENT_SECRET watchman
 cf set-env watchman CLIENT_ID watchman
-cf set-env watchman UAA_ADDRESS https://uaa.10.244.0.34.xip.io
+cf set-env watchman UAA_ENDPOINT https://uaa.10.244.0.34.xip.io
 cf start watchman
 ```
 
